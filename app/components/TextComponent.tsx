@@ -5,5 +5,5 @@ export default function TextComponent({
 }: {
   children: React.ReactNode;
 }) {
-  return <p className="text-black">{children}</p>;
+  return <p className="text-white">{children}</p>;
 }

@@ -2,6 +2,7 @@
 import { createClient } from "@/utils/supabase/server";
 import HeaderComponent from "@/app/components/HeaderComponent";
 import TextComponent from "@/app/components/TextComponent";
+import ImageComponent from "@/app/components/ImageComponent";
 
 export async function fetchAndMapComponents(pageName: string) {
   const supabase = createClient();
@@ -24,6 +25,12 @@ export async function fetchAndMapComponents(pageName: string) {
               return (
                 <div key={component.id}>
                   <HeaderComponent>{component.content}</HeaderComponent>
+                </div>
+              );
+            case "image":
+              return (
+                <div key={component.id}>
+                  <ImageComponent src={component.src} alt={component.alt} />
                 </div>
               );
             default:

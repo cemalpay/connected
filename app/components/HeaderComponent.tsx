@@ -5,5 +5,5 @@ export default function HeaderComponent({
 }: {
   children: React.ReactNode;
 }) {
-  return <h2 className="text-emerald-950 text-3xl">{children}</h2>;
+  return <h2 className="text-white/90 font-bold text-3xl">{children}</h2>;
 }
