@@ -1,5 +1,6 @@
-import Todo from "./Todo";
 import React, { useEffect, useState } from "react";
+import TextComponent from "./components/TextComponent";
+import HeaderComponent from "./components/HeaderComponent";
 
 import { db } from "./firebase";
 import {
@@ -11,81 +12,50 @@ import {
   addDoc,
   deleteDoc,
 } from "firebase/firestore";
-function App() {
-  const [todos, setTodos] = useState([]);
-  const [input, setInput] = useState("");
 
-  //Create todo
-  const createTodo = async (e) => {
-    e.preventDefault();
-    if (input === "") {
-      alert("Please enter a to-do");
-      return;
-    }
-    await addDoc(collection(db, "todos"), {
-      text: input,
-      completed: false,
-    });
-    setInput("");
+export default function Home() {
+  const [homeComponents, setHomeComponents] = useState([]);
+
+  // reorder components with order number from firebase
+  const reorderComponents = (components) => {
+    const orderedComponents = components.sort((a, b) => a.order - b.order);
+    setHomeComponents(orderedComponents);
   };
 
-  // Read todo from firebase
+  // Read components from firebase
   useEffect(() => {
-    const q = query(collection(db, "todos"));
+    const q = query(collection(db, "home"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const todos = [];
+      const homeComponents = [];
       querySnapshot.forEach((doc) => {
-        todos.push({ ...doc.data(), id: doc.id });
+        homeComponents.push({ ...doc.data(), id: doc.id });
       });
-      setTodos(todos);
+      setHomeComponents(homeComponents);
+      reorderComponents(homeComponents);
     });
     return () => {
       unsubscribe();
     };
   }, []);
 
-  // Update todo in firebase
-  const toggleComplete = async (todo) => {
-    await updateDoc(doc(db, "todos", todo.id), {
-      completed: !todo.completed,
-    });
-  };
-  // Delete todo from firebase
-  const deleteTodo = async (id) => {
-    await deleteDoc(doc(db, "todos", id));
-  };
-
   return (
     <>
-      <div className="h-screen w-screen p-4 bg-black/90 ">
-        <div className="text-white flex flex-col gap-4">
-          <h3>To-do App</h3>
-          <form onSubmit={createTodo}>
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              type="text"
-              placeholder="Add a to-do"
-              className="border-white border px-4 text-black"
-            />
-            <button className="border-white border px-4" type="submit">
-              + Add
-            </button>
-          </form>
-          <ul>
-            {todos.map((todo, index) => (
-              <Todo
-                key={index}
-                todo={todo}
-                toggleComplete={toggleComplete}
-                deleteTodo={deleteTodo}
-              />
-            ))}
-          </ul>
-        </div>
-      </div>
+      <h2>Hello World!</h2>
+      {/* use case switch */}
+      {homeComponents.map((component) => {
+        switch (component.name) {
+          case "text":
+            return (
+              <TextComponent key={component.id}>
+                {component.content}
+              </TextComponent>
+            );
+          case "header":
+            return <HeaderComponent key={component.id} content={component} />;
+          default:
+            return <p>Component not found</p>;
+        }
+      })}
     </>
   );
 }
-
-export default App;
