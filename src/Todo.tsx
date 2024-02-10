@@ -1,6 +1,7 @@
 export default function Todo({
   todo,
   toggleComplete,
+  deleteTodo,
 }: {
   todo: { text: string; id: string; completed: boolean };
   toggleComplete: (selectedTodo: {
@@ -8,6 +9,7 @@ export default function Todo({
     id: string;
     completed: boolean;
   }) => void;
+  deleteTodo: (id: string) => void;
 }) {
   return (
     <li
@@ -23,7 +25,12 @@ export default function Todo({
         />
         <p onClick={() => toggleComplete(todo)}>{todo.text}</p>
       </div>
-      <button className="border border-white px-4">X</button>
+      <button
+        onClick={() => deleteTodo(todo.id)}
+        className="border border-white px-4"
+      >
+        X
+      </button>
     </li>
   );
 }
